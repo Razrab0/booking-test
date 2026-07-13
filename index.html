@@ -3,123 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Запись к Инструктору</title>
+    <title>Запись к Автоинструктору</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f4f6f9; padding: 20px; display: flex; justify-content: center; }
-        .box { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); width: 100%; max-width: 400px; }
-        h2 { text-align: center; color: #333; }
+        body { font-family: Arial, sans-serif; background: #f4f6f9; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .box { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); width: 100%; max-width: 420px; margin-bottom: 20px; box-sizing: border-box; }
+        h2, h3 { text-align: center; color: #333; margin-top: 0; }
         label { font-weight: bold; display: block; margin: 15px 0 5px; }
-        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        button { width: 100%; background: #27ae60; color: white; border: none; padding: 12px; border-radius: 5px; font-size: 16px; cursor: pointer; margin-top: 20px; }
-        #status { margin-top: 15px; padding: 10px; border-radius: 5px; text-align: center; display: none; font-weight: bold; }
-        .ok { background: #d4edda; color: #155724; }
-        .err { background: #f8d7da; color: #721c24; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 15px; }
+        .slot-container { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; }
+        .slot-btn { padding: 15px; border: 2px solid #27ae60; background: #e8f5e9; color: #27ae60; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: bold; text-align: center; transition: 0.2s; }
+        .slot-btn:hover { background: #c8e6c9; }
+        .slot-btn.selected { background: #27ae60; color: white; border-color: #2196f3; box-shadow: 0 0 8px rgba(33,150,243,0.5); }
+        .slot-btn:disabled { background: #eee; border-color: #ccc; color: #888; cursor: not-allowed; }
+        button.submit-btn { width: 100%; background: #2196f3; color: white; border: none; padding: 14px; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top: 20px; font-weight: bold; }
+        button.submit-btn:disabled { background: #ccc; cursor: not-allowed; }
+        button.cancel-btn { width: 100%; background: #e74c3c; color: white; border: none; padding: 12px; border-radius: 6px; font-size: 15px; cursor: pointer; margin-top: 10px; }
+        #status, #cancelStatus { margin-top: 15px; padding: 12px; border-radius: 6px; text-align: center; display: none; font-weight: bold; font-size: 14px; }
+        .ok { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .err { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { color: #666; font-size: 12px; text-align: center; margin-top: 5px; }
     </style>
 </head>
 <body>
 
 <div class="box">
-    <h2>🏍️ Онлайн-запись</h2>
+    <h2>📅 Онлайн-запись</h2>
     <form id="mainForm">
-        <label>Ваше Имя:</label>
-        <input type="text" id="name" required placeholder="Имя Фамилия">
+        <label>Ваше Имя и Фамилия:</label>
+        <input type="text" id="name" required placeholder="Иван Иванов">
+
+        <label>Email (для приглашения):</label>
+        <input type="email" id="email" required placeholder="example@gmail.com">
 
         <label>Телефон:</label>
-        <input type="tel" id="phone" required placeholder="+7...">
+        <input type="tel" id="phone" required value="+7 " placeholder="+7 (900) 000-00-00">
 
-        <label>Доступные слоты времени:</label>
-        <select id="slotSelect" required>
-            <option value="">Загрузка свободных окон...</option>
-        </select>
-
-        <label>Что выбираем?:</label>
-        <select id="type" required onchange="checkType()">
+        <label>Тип занятия:</label>
+        <select id="type" required onchange="updateInterface()">
             <option value="moto">🏍️ Мотоцикл</option>
             <option value="car">🚗 Автомобиль</option>
         </select>
 
-        <div id="motoLevel">
-            <label>Ваш уровень:</label>
-            <select id="level">
-                <option value="green">🟢 Зеленый (Самый простой)</option>
-                <option value="yellow">🟡 Желтый (Средний)</option>
-                <option value="red">🔴 Красный (Сложный ученик)</option>
+        <div id="motoLevelBlock">
+            <label>Ваш уровень подготовки:</label>
+            <select id="level" onchange="updateInterface()">
+                <option value="green">🟢 Уверенно катаюсь</option>
+                <option value="yellow">🟡 Я средний</option>
+                <option value="red">🔴 Я новичок</option>
             </select>
         </div>
 
-        <button type="submit">Подтвердить запись</button>
+        <label style="margin-bottom: 0;">Выберите доступное время:</label>
+        <div class="info">Кнопки обновляются сами под ваш уровень</div>
+        <div id="slotsBox" class="slot-container">
+            <div>Загрузка расписания...</div>
+        </div>
+
+        <input type="hidden" id="selectedSlot" required>
+        <button type="submit" class="submit-btn" id="submitBtn" disabled>Подтвердить запись</button>
     </form>
     <div id="status"></div>
 </div>
 
+<div class="box" style="border-top: 4px solid #e74c3c;">
+    <h3>❌ Отмена записи</h3>
+    <p style="font-size: 13px; color: #666; text-align: center;">Введите код, полученный при записи, чтобы отменить занятие.</p>
+    <input type="text" id="cancelCode" placeholder="Пример: ID-123456">
+    <button type="button" class="cancel-btn" onclick="cancelBooking()">Отменить занятие</button>
+    <div id="cancelStatus"></div>
+</div>
+
 <script>
-    // ВСТАВЬТЕ СЮДА ВАШУ НОВУЮ ССЫЛКУ ИЗ GOOGLE APPS SCRIPT МЕЖДУ КАВЫЧЕК
+    // ЗАМЕНИТЕ ССЫЛКУ НИЖЕ НА ВАШУ ССЫЛКУ ИЗ GOOGLE APPS SCRIPT
     const API_URL = 'https://script.google.com/macros/s/AKfycbzcS8JoDdzWV5jHWy6YB7AHNjGJYeVvOVrz8eKHz8FIkNwVK1-RRV0u8byPPjSlI6jZ/exec';
+    
+    let globalSlotsData = [];
 
-    // Безопасный запрос для локальных файлов (обходим защиту браузера через JSONP)
-    window.onload = function() {
-        const script = document.createElement('script');
-        script.src = API_URL + '?callback=handleSlots';
-        document.body.appendChild(script);
-    };
-
-    // Функция, которая обрабатывает полученные слоты
-    function handleSlots(slots) {
-        const select = document.getElementById('slotSelect');
-        select.innerHTML = '';
-        if(!slots || slots.length === 0) {
-            select.innerHTML = '<option value="">Нет свободных слотов в календаре</option>';
-            return;
+    document.getElementById('phone').addEventListener('input', function(e) {
+        let val = e.target.value;
+        if (!val.startsWith('+7 ')) {
+            if (val.startsWith('8')) {
+                e.target.value = '+7 ' + val.substring(1);
+            } else {
+                e.target.value = '+7 ';
+            }
         }
-        slots.forEach(s => {
-            let opt = document.createElement('option');
-            opt.value = `${s.date}|${s.time}`;
-            opt.innerText = `${s.date} в ${s.time}`;
-            select.appendChild(opt);
-        });
+    });
+
+    function loadSlots() {
+        const oldScript = document.getElementById('jsonp-slots');
+        if(oldScript) oldScript.remove();
+        const script = document.createElement('script');
+        script.id = 'jsonp-slots';
+        script.src = API_URL + '?callback=renderSlotsData&_t=' + new Date().getTime();
+        document.body.appendChild(script);
     }
 
-    function checkType() {
+    function renderSlotsData(slots) {
+        globalSlotsData = slots;
+        updateInterface();
+    }
+
+    function updateInterface() {
         const type = document.getElementById('type').value;
-        document.getElementById('motoLevel').style.display = type === 'moto' ? 'block' : 'none';
+        const level = document.getElementById('level').value;
+        const slotsBox = document.getElementById('slotsBox');
+        const motoBlock = document.getElementById('motoLevelBlock');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        motoBlock.style.display = type === 'moto' ? 'block' : 'none';
+        slotsBox.innerHTML = '';
+        
+        if (!globalSlotsData || globalSlotsData.length === 0) {
+            slotsBox.innerHTML = '<div>Нет свободных слотов в календаре</div>';
+            submitBtn.disabled = true;
+            return;
+        }
+
+        globalSlotsData.forEach((slot) => {
+            let btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'slot-btn';
+            
+            let dateObj = new Date(slot.date);
+            let formattedDate = dateObj.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+            btn.innerText = `${formattedDate} в ${slot.time}`;
+            
+            let isAllowed = true;
+            let reason = "";
+
+            if (type === "car") {
+                if (slot.totalMoto > 0) { isAllowed = false; reason = " (Занято мотоциклами)"; }
+                if (slot.car > 0) { isAllowed = false; reason = " (Занято машиной)"; }
+            } else if (type === "moto") {
+                if (slot.car > 0) { isAllowed = false; reason = " (Занято машиной)"; }
+                if (slot.totalMoto >= 3) { isAllowed = false; reason = " (Все места заняты)"; }
+                
+                if (level === "red" && (slot.red > 0 || slot.yellow > 0 || slot.green > 0)) {
+                    isAllowed = false; reason = " (Новичок занимается один)";
+                }
+                if (level === "yellow") {
+                    if (slot.red > 0) { isAllowed = false; reason = " (Занято новичком)"; }
+                    if (slot.yellow >= 2) { isAllowed = false; reason = " (Макс. 2 средних)"; }
+                    if (slot.yellow === 1 && slot.green > 1) { isAllowed = false; reason = " (Несовместимый состав)"; }
+                }
+                if (level === "green") {
+                    if (slot.red === 1 && slot.green >= 2) { isAllowed = false; reason = " (С новичком макс. 2 профи)"; }
+                    if (slot.yellow === 2 && slot.green >= 1) { isAllowed = false; reason = " (Со средними макс. 1 профи)"; }
+                }
+            }
+
+            if (!isAllowed) {
+                btn.disabled = true;
+                btn.innerText += reason;
+            } else {
+                btn.onclick = function() {
+                    document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    document.getElementById('selectedSlot').value = `${slot.date}|${slot.time}`;
+                    submitBtn.disabled = false;
+                };
+            }
+            slotsBox.appendChild(btn);
+        });
     }
 
     document.getElementById('mainForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const status = document.getElementById('status');
+        const btn = document.getElementById('submitBtn');
         status.style.display = 'block';
         status.className = '';
-        status.innerText = 'Проверяем правила и оформляем...';
+        status.innerText = 'Оформление записи...';
+        btn.disabled = true;
 
-        const slotValue = document.getElementById('slotSelect').value;
-        if(!slotValue) return;
-        const [date, time] = slotValue.split('|');
+        const [date, time] = document.getElementById('selectedSlot').value.split('|');
+        const name = encodeURIComponent(document.getElementById('name').value.trim());
+        const phone = encodeURIComponent(document.getElementById('phone').value.trim());
+        const email = encodeURIComponent(document.getElementById('email').value.trim());
+        const type = document.getElementById('type').value;
+        const level = type === 'car' ? 'none' : document.getElementById('level').value;
 
-        const data = {
-            name: document.getElementById('name').value,
-            phone: document.getElementById('phone').value,
-            date: date,
-            time: time,
-            type: document.getElementById('type').value,
-            level: document.getElementById('type').value === 'car' ? 'none' : document.getElementById('level').value
-        };
-
-        // Отправка формы, адаптированная под локальный запуск с компьютера
-        fetch(API_URL, {
-            method: 'POST',
-            mode: 'no-cors', 
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: JSON.stringify(data)
-        }).then(() => {
-            status.className = 'ok';
-            status.innerText = 'Заявка отправлена! Проверьте Google Таблицу и Календарь через 5 секунд.';
-            document.getElementById('mainForm').reset();
-            checkType();
-        }).catch(() => {
-            status.className = 'err';
-            status.innerText = 'Ошибка отправки. Попробуйте еще раз.';
-        });
+        const oldBookingScript = document.getElementById('jsonp-booking');
+        if(oldBookingScript) oldBookingScript.remove();
+        const script = document.createElement('script');
+        script.id = 'jsonp-booking';
+        script.src = `${API_URL}?action=book&date=${date}&time=${time}&type=${type}&level=${level}&name=${name}&phone=${phone}&email=${email}&callback=handleBookingResponse`;
+        document.body.appendChild(script);
     });
-</script>
-</body>
-</html>
+
+    function handleBookingResponse(response) {
+        const status = document.getElementById('status');
+        if (response.status === 'success') {
+            status.className = 'ok';
+            status.innerText = response.message;
+            document.getElementById('mainForm').reset();
+            document.getElementById('phone').value = "+7 ";
+loadSlots();
+} else {
+status.className = 'err';
+status.innerText = 'Ошибка: ' + response.message;
+document.getElementById('submitBtn').disabled = false;
+}
+}
+
+function cancelBooking() {
+const code = document.getElementById('cancelCode').value.trim();
+const status = document.getElementById('cancelStatus');
+if(!code) return;status.style.display = 'block';
+status.className = '';
+status.innerText = 'Отмена занятия...';
+const script = document.createElement('script');
+script.src = ${API_URL}?
+action=cancel&bookingId=${encodeURIComponent(code)}&callback=handleCancelResponse;
+document.body.appendChild(script);
+}
+function handleCancelResponse(response) {
+const status = document.getElementById('cancelStatus');
+if (response.status === 'success') {
+status.className = 'ok';
+status.innerText = response.message;
+document.getElementById('cancelCode').value = '';
+loadSlots();
+} else {
+status.className = 'err';
+status.innerText = response.message;
+}
+}
+
+window.onload = loadSlots;
