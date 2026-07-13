@@ -72,10 +72,8 @@
     <button type="button" class="cancel-btn" onclick="cancelBooking()">Отменить занятие</button>
     <div id="cancelStatus"></div>
 </div>
-
 <script>
-    // ЗАМЕНИТЕ ССЫЛКУ НИЖЕ НА ВАШУ ССЫЛКУ ИЗ GOOGLE APPS SCRIPT
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzcS8JoDdzWV5jHWy6YB7AHNjGJYeVvOVrz8eKHz8FIkNwVK1-RRV0u8byPPjSlI6jZ/exec';
+    const API_URL = 'https://google.com';
     
     let globalSlotsData = [];
 
@@ -199,36 +197,41 @@
             status.innerText = response.message;
             document.getElementById('mainForm').reset();
             document.getElementById('phone').value = "+7 ";
-loadSlots();
-} else {
-status.className = 'err';
-status.innerText = 'Ошибка: ' + response.message;
-document.getElementById('submitBtn').disabled = false;
-}
-}
+            loadSlots();
+        } else {
+            status.className = 'err';
+            status.innerText = 'Ошибка: ' + response.message;
+            document.getElementById('submitBtn').disabled = false;
+        }
+    }
 
-function cancelBooking() {
-const code = document.getElementById('cancelCode').value.trim();
-const status = document.getElementById('cancelStatus');
-if(!code) return;status.style.display = 'block';
-status.className = '';
-status.innerText = 'Отмена занятия...';
-const script = document.createElement('script');
-script.src = ${API_URL}?
-action=cancel&bookingId=${encodeURIComponent(code)}&callback=handleCancelResponse;
-document.body.appendChild(script);
-}
-function handleCancelResponse(response) {
-const status = document.getElementById('cancelStatus');
-if (response.status === 'success') {
-status.className = 'ok';
-status.innerText = response.message;
-document.getElementById('cancelCode').value = '';
-loadSlots();
-} else {
-status.className = 'err';
-status.innerText = response.message;
-}
-}
+    function cancelBooking() {
+        const code = document.getElementById('cancelCode').value.trim();
+        const status = document.getElementById('cancelStatus');
+        if(!code) return;
+        status.style.display = 'block';
+        status.className = '';
+        status.innerText = 'Отмена занятия...';
+        const script = document.createElement('script');
+        script.id = 'jsonp-booking';
+        script.src = `${API_URL}?action=cancel&bookingId=${encodeURIComponent(code)}&callback=handleCancelResponse`;
+        document.body.appendChild(script);
+    }
 
-window.onload = loadSlots;
+    function handleCancelResponse(response) {
+        const status = document.getElementById('cancelStatus');
+        if (response.status === 'success') {
+            status.className = 'ok';
+            status.innerText = response.message;
+            document.getElementById('cancelCode').value = '';
+            loadSlots();
+        } else {
+            status.className = 'err';
+            status.innerText = response.message;
+        }
+    }
+
+    window.onload = loadSlots;
+</script>
+</body>
+</html>
