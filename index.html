@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Запись к Инструктору</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f9; padding: 20px; display: flex; justify-content: center; }
+        .box { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); width: 100%; max-width: 400px; }
+        h2 { text-align: center; color: #333; }
+        label { font-weight: bold; display: block; margin: 15px 0 5px; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; background: #27ae60; color: white; border: none; padding: 12px; border-radius: 5px; font-size: 16px; cursor: pointer; margin-top: 20px; }
+        #status { margin-top: 15px; padding: 10px; border-radius: 5px; text-align: center; display: none; font-weight: bold; }
+        .ok { background: #d4edda; color: #155724; }
+        .err { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>🏍️ Онлайн-запись</h2>
+    <form id="mainForm">
+        <label>Ваше Имя:</label>
+        <input type="text" id="name" required placeholder="Имя Фамилия">
+
+        <label>Телефон:</label>
+        <input type="tel" id="phone" required placeholder="+7...">
+
+        <label>Доступные слоты времени:</label>
+        <select id="slotSelect" required>
+            <option value="">Загрузка свободных окон...</option>
+        </select>
+
+        <label>Что выбираем?:</label>
+        <select id="type" required onchange="checkType()">
+            <option value="moto">🏍️ Мотоцикл</option>
+            <option value="car">🚗 Автомобиль</option>
+        </select>
+
+        <div id="motoLevel">
+            <label>Ваш уровень:</label>
+            <select id="level">
+                <option value="green">🟢 Зеленый (Самый простой)</option>
+                <option value="yellow">🟡 Желтый (Средний)</option>
+                <option value="red">🔴 Красный (Сложный ученик)</option>
+            </select>
+        </div>
+
+        <button type="submit">Подтвердить запись</button>
+    </form>
+    <div id="status"></div>
+</div>
+
+<script>
+    // ВСТАВЬТЕ СЮДА ВАШУ НОВУЮ ССЫЛКУ ИЗ GOOGLE APPS SCRIPT МЕЖДУ КАВЫЧЕК
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzcS8JoDdzWV5jHWy6YB7AHNjGJYeVvOVrz8eKHz8FIkNwVK1-RRV0u8byPPjSlI6jZ/exec';
+
+    // Безопасный запрос для локальных файлов (обходим защиту браузера через JSONP)
+    window.onload = function() {
+        const script = document.createElement('script');
+        script.src = API_URL + '?callback=handleSlots';
+        document.body.appendChild(script);
+    };
+
+    // Функция, которая обрабатывает полученные слоты
+    function handleSlots(slots) {
+        const select = document.getElementById('slotSelect');
+        select.innerHTML = '';
+        if(!slots || slots.length === 0) {
+            select.innerHTML = '<option value="">Нет свободных слотов в календаре</option>';
+            return;
+        }
+        slots.forEach(s => {
+            let opt = document.createElement('option');
+            opt.value = `${s.date}|${s.time}`;
+            opt.innerText = `${s.date} в ${s.time}`;
+            select.appendChild(opt);
+        });
+    }
+
+    function checkType() {
+        const type = document.getElementById('type').value;
+        document.getElementById('motoLevel').style.display = type === 'moto' ? 'block' : 'none';
+    }
+
+    document.getElementById('mainForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const status = document.getElementById('status');
+        status.style.display = 'block';
+        status.className = '';
+        status.innerText = 'Проверяем правила и оформляем...';
+
+        const slotValue = document.getElementById('slotSelect').value;
+        if(!slotValue) return;
+        const [date, time] = slotValue.split('|');
+
+        const data = {
+            name: document.getElementById('name').value,
+            phone: document.getElementById('phone').value,
+            date: date,
+            time: time,
+            type: document.getElementById('type').value,
+            level: document.getElementById('type').value === 'car' ? 'none' : document.getElementById('level').value
+        };
+
+        // Отправка формы, адаптированная под локальный запуск с компьютера
+        fetch(API_URL, {
+            method: 'POST',
+            mode: 'no-cors', 
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: JSON.stringify(data)
+        }).then(() => {
+            status.className = 'ok';
+            status.innerText = 'Заявка отправлена! Проверьте Google Таблицу и Календарь через 5 секунд.';
+            document.getElementById('mainForm').reset();
+            checkType();
+        }).catch(() => {
+            status.className = 'err';
+            status.innerText = 'Ошибка отправки. Попробуйте еще раз.';
+        });
+    });
+</script>
+</body>
+</html>
