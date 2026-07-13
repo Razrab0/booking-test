@@ -73,7 +73,7 @@
     <div id="cancelStatus"></div>
 </div>
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyBjgFD3lK9gm_pfwx6NLp3y_gdpVm_NMGQs33ve3fKp9LdAcrPd6kKzTHVlquIXtd1/exec';
+    const API_URL = 'https://google.com';
     
     let globalSlotsData = [];
 
@@ -127,8 +127,12 @@
             btn.type = 'button';
             btn.className = 'slot-btn';
             
-            let dateObj = new Date(slot.date);
-            let formattedDate = dateObj.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+            let dateParts = slot.date.split('-');
+            let months = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+            let day = parseInt(dateParts[2], 10);
+            let monthIdx = parseInt(dateParts[1], 10) - 1;
+            let formattedDate = day + ' ' + months[monthIdx];
+            
             btn.innerText = `${formattedDate} в ${slot.time}`;
             
             let isAllowed = true;
@@ -141,14 +145,19 @@
                 if (slot.car > 0) { isAllowed = false; reason = " (Занято машиной)"; }
                 if (slot.totalMoto >= 3) { isAllowed = false; reason = " (Все места заняты)"; }
                 
-                if (level === "red" && (slot.red > 0 || slot.yellow > 0 || slot.green > 0)) {
-                    isAllowed = false; reason = " (Новичок идет первым в пустой слот)";
+                // ИСПРАВЛЕННАЯ ГИБКАЯ ЛОГИКА ДЛЯ НОВИЧКА (КРАСНОГО)
+                if (level === "red") {
+                    if (slot.red > 0) { isAllowed = false; reason = " (Новичок может быть только один)"; }
+                    if (slot.yellow > 0) { isAllowed = false; reason = " (В слоте занимается средний)"; }
+                    if (slot.green > 2) { isAllowed = false; reason = " (С новичком макс. 2 уверенных)"; }
                 }
+                
                 if (level === "yellow") {
                     if (slot.red > 0) { isAllowed = false; reason = " (Занято новичком)"; }
                     if (slot.yellow >= 2) { isAllowed = false; reason = " (Макс. 2 средних)"; }
                     if (slot.yellow === 1 && slot.green > 1) { isAllowed = false; reason = " (Несовместимый состав)"; }
                 }
+                
                 if (level === "green") {
                     if (slot.red === 1 && slot.green >= 2) { isAllowed = false; reason = " (С новичком макс. 2 профи)"; }
                     if (slot.yellow === 2 && slot.green >= 1) { isAllowed = false; reason = " (Со средними макс. 1 профи)"; }
