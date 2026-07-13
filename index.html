@@ -67,13 +67,13 @@
 
 <div class="box" style="border-top: 4px solid #e74c3c;">
     <h3>❌ Отмена записи</h3>
-    <p style="font-size: 13px; color: #666; text-align: center;">Введите код, полученный при записи, чтобы отменить занятие.</p>
-    <input type="text" id="cancelCode" placeholder="Пример: ID-123456">
+    <p style="font-size: 13px; color: #666; text-align: center;">Введите только цифры секретного кода для отмены занятия.</p>
+    <input type="text" id="cancelCode" placeholder="Пример: 584321">
     <button type="button" class="cancel-btn" onclick="cancelBooking()">Отменить занятие</button>
     <div id="cancelStatus"></div>
 </div>
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwMc-hDtTkohkR0H2OGI8KXOZsRW9-QLBQ0x_5Ur7_8ShThWLo0bKsKXfAuOSHBYwZK/exec';
+    const API_URL = 'https://google.com';
     
     let globalSlotsData = [];
 
@@ -86,6 +86,10 @@
                 e.target.value = '+7 ';
             }
         }
+    });
+
+    document.getElementById('cancelCode').addEventListener('input', function(e) {
+        e.target.value = e.target.value.replace(/\D/g, '');
     });
 
     function loadSlots() {
@@ -138,7 +142,7 @@
                 if (slot.totalMoto >= 3) { isAllowed = false; reason = " (Все места заняты)"; }
                 
                 if (level === "red" && (slot.red > 0 || slot.yellow > 0 || slot.green > 0)) {
-                    isAllowed = false; reason = " (Новичок занимается один)";
+                    isAllowed = false; reason = " (Новичок идет первым в пустой слот)";
                 }
                 if (level === "yellow") {
                     if (slot.red > 0) { isAllowed = false; reason = " (Занято новичком)"; }
@@ -212,8 +216,11 @@
         status.style.display = 'block';
         status.className = '';
         status.innerText = 'Отмена занятия...';
+
+        const oldCancelScript = document.getElementById('jsonp-cancel');
+        if(oldCancelScript) oldCancelScript.remove();
         const script = document.createElement('script');
-        script.id = 'jsonp-booking';
+        script.id = 'jsonp-cancel';
         script.src = `${API_URL}?action=cancel&bookingId=${encodeURIComponent(code)}&callback=handleCancelResponse`;
         document.body.appendChild(script);
     }
