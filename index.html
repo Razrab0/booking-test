@@ -170,8 +170,8 @@
             
             let dateParts = dateStr.split('-');
             let months = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
-            let day = parseInt(dateParts[2], 10);
-            let monthIdx = parseInt(dateParts[1], 10) - 1;
+            let day = parseInt(dateParts, 10);
+            let monthIdx = parseInt(dateParts, 10) - 1;
             let formattedDate = day + ' ' + months[monthIdx];
             
             let header = document.createElement('div');
@@ -215,7 +215,7 @@
 
                 if (!isAllowed) {
                     btn.disabled = true;
-                    badge.innerText = "Занято";
+                    badge.innerText = "Занято"; 
                 } else {
                     btn.onclick = function() {
                         document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
@@ -236,6 +236,17 @@
         e.preventDefault();
         const status = document.getElementById('status');
         const btn = document.getElementById('submitBtn');
+        
+        // ЖЕСТКАЯ ПРОВЕКА НА ОБЯЗАТЕЛЬНЫЙ ВВОД ТЕЛЕФОНА
+        const rawPhone = document.getElementById('phone').value.trim();
+        // Если в поле только "+7" или "+7 " (меньше 4 символов после очистки от пробелов), блокируем форму
+        if (rawPhone.replace(/\s/g, '').length <= 2) {
+            status.style.display = 'block';
+            status.className = 'err';
+            status.innerText = 'Ошибка: Пожалуйста, введите ваш номер телефона полностью!';
+            return;
+        }
+
         status.style.display = 'block';
         status.className = '';
         status.innerText = 'Оформление записи...';
@@ -243,11 +254,7 @@
 
         const [date, time] = document.getElementById('selectedSlot').value.split('|');
         const name = encodeURIComponent(document.getElementById('name').value.trim());
-        
-        // Магия против #ERROR!: принудительно ставим апостроф перед номером телефона
-        const rawPhone = document.getElementById('phone').value.trim();
         const phone = encodeURIComponent("'" + rawPhone); 
-        
         const email = encodeURIComponent(document.getElementById('email').value.trim());
         const type = document.getElementById('type').value;
         const level = type === 'car' ? 'none' : document.getElementById('level').value;
