@@ -2,16 +2,16 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Онлайн-запись к автоинструктору</title>
     <style>
-        :root { --primary: #2563eb; --primary-hover: #1d4ed8; --success: #10b981; --success-bg: #ecfdf5; --danger: #ef4444; --bg: #f8fafc; --text: #1e293b; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; box-sizing: border-box; }
-        .box { background: white; padding: 24px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); width: 100%; max-width: 440px; margin-bottom: 20px; box-sizing: border-box; border: 1px solid #e2e8f0; }
+        :root { --primary: #2563eb; --primary-hover: #1d4ed8; --success: #065f46; --success-bg: #d1fae5; --danger: #ef4444; --bg: #f8fafc; --text: #1e293b; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        .box { background: white; padding: 24px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); width: 100%; max-width: 440px; margin-bottom: 20px; box-sizing: border-box; border: 1px solid #e2e8f0; }
         h2 { font-size: 20px; font-weight: 700; text-align: center; margin: 0 0 20px 0; color: #0f172a; display: flex; align-items: center; justify-content: center; gap: 8px; }
         h3 { font-size: 18px; margin: 0 0 15px 0; color: #0f172a; text-align: center; }
         label { font-size: 14px; font-weight: 600; display: block; margin: 16px 0 6px; color: #475569; }
-        input, select { width: 100%; padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; font-size: 15px; background: #fff; transition: 0.2s; color: var(--text); }
+        input, select { width: 100%; padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; font-size: 15px; background: #fff; color: var(--text); }
         input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
         
         .type-switcher { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 5px; }
@@ -19,26 +19,27 @@
         .type-tab.active { border-color: var(--primary); background: #eff6ff; color: var(--primary); }
         
         .level-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
-        .level-card { padding: 12px 14px; border: 2px solid #e2e8f0; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 14px; transition: 0.2s; background: white; }
-        .level-card:hover { border-color: #cbd5e1; }
+        .level-card { padding: 12px 14px; border: 2px solid #e2e8f0; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 14px; background: white; }
         .level-card.active { border-color: var(--primary); background: #eff6ff; font-weight: 600; }
         
         .date-group { margin-top: 15px; }
         .date-header { font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 4px; }
         .slot-container { display: grid; grid-template-columns: 1fr; gap: 8px; }
-        .slot-btn { padding: 14px; border: 1px solid #a7f3d0; background: var(--success-bg); color: #065f46; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; text-align: left; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; width: 100%; box-sizing: border-box; }
-        .slot-btn:hover:not(:disabled) { background: #d1fae5; border-color: #34d399; }
-        .slot-btn.selected { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 12px rgba(37,99,235,0.2); }
-        .slot-btn:disabled { background: #f1f5f9; border-color: #e2e8f0; color: #94a3b8; cursor: not-allowed; font-weight: 500; font-size: 13px; }
         
-        button.submit-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 14px; border-radius: 10px; font-size: 16px; cursor: pointer; margin-top: 24px; font-weight: 700; transition: 0.2s; box-shadow: 0 4px 6px -1px rgba(37,99,235,0.2); }
-        button.submit-btn:hover:not(:disabled) { background: var(--primary-hover); }
-        button.submit-btn:disabled { background: #cbd5e1; color: #94a3b8; cursor: not-allowed; box-shadow: none; }
-        button.cancel-btn { width: 100%; background: #fff; color: var(--danger); border: 2px solid #fee2e2; padding: 12px; border-radius: 10px; font-size: 15px; cursor: pointer; margin-top: 10px; font-weight: 600; transition: 0.2s; }
-        button.cancel-btn:hover { background: #fef2f2; border-color: #fca5a5; }
+        /* Исправленные контрастные стили для кнопок расписания */
+        .slot-btn { padding: 14px; border: 1px solid #34d399; background: var(--success-bg); color: var(--success); border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 700; text-align: left; display: flex; justify-content: space-between; align-items: center; width: 100%; box-sizing: border-box; transition: background 0.1s, color 0.1s; }
         
-        #status, #cancelStatus { margin-top: 15px; padding: 12px 16px; border-radius: 10px; text-align: center; display: none; font-weight: 600; font-size: 14px; line-height: 1.4; }
-        .ok { background: var(--success-bg); color: #065f46; border: 1px solid #a7f3d0; }
+        /* Жесткая фиксация синего цвета при выборе (работает на мобильных без багов) */
+        .slot-btn.selected, .slot-btn:active:not(:disabled) { background: var(--primary) !important; color: white !important; border-color: var(--primary) !important; box-shadow: 0 4px 12px rgba(37,99,235,0.2); }
+        .slot-btn.selected span { color: white !important; }
+        .slot-btn:disabled { background: #f1f5f9; border-color: #e2e8f0; color: #94a3b8; cursor: not-allowed; font-weight: 500; }
+        
+        button.submit-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 14px; border-radius: 10px; font-size: 16px; cursor: pointer; margin-top: 24px; font-weight: 700; }
+        button.submit-btn:disabled { background: #cbd5e1; color: #94a3b8; cursor: not-allowed; }
+        button.cancel-btn { width: 100%; background: #fff; color: var(--danger); border: 2px solid #fee2e2; padding: 12px; border-radius: 10px; font-size: 15px; cursor: pointer; margin-top: 10px; font-weight: 600; }
+        
+        #status, #cancelStatus { margin-top: 15px; padding: 12px 16px; border-radius: 10px; text-align: center; display: none; font-weight: 600; font-size: 14px; }
+        .ok { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
         .err { background: #fef2f2; color: #991b1b; border: 1px solid #fee2e2; }
         .info { color: #666; font-size: 12px; text-align: center; margin-top: 5px; }
     </style>
@@ -51,10 +52,10 @@
         <label>Ваше Имя и Фамилия:</label>
         <input type="text" id="name" required placeholder="Иван Иванов">
 
-        <label>Email (для приглашения):</label>
+        <label>Email (необязательно):</label>
         <input type="email" id="email" placeholder="example@gmail.com">
 
-        <label>Telephone:</label>
+        <label>Телефон:</label>
         <input type="tel" id="phone" required value="+7 " placeholder="+7 (900) 000-00-00">
 
         <label>Тип занятия:</label>
@@ -92,6 +93,7 @@
     <div id="cancelStatus"></div>
 </div>
 <script>
+    // ВСТАВЬТЕ СЮДА ВАШУ ССЫЛКУ ИЗ GOOGLE APPS SCRIPT МЕЖДУ КАВЫЧЕК
     const API_URL = 'https://script.google.com/macros/s/AKfycbyDKvmxQTxhnFwodV6ML0DicW0suf8HVlPX80hLu2SGHgV_0s2Oyvqni9enPb53lUKa/exec';
     
     let globalSlotsData = [];
@@ -191,35 +193,29 @@
                 
                 let badge = document.createElement('span');
                 badge.style.fontSize = '12px';
-                badge.style.opacity = '0.8';
+                badge.style.opacity = '0.9';
                 badge.innerText = 'Свободно';
                 btn.appendChild(badge);
                 
                 let isAllowed = true;
 
                 if (type === "car") {
-                    if (slot.totalMoto > 0) { isAllowed = false; badge.innerText = "Занято мотоциклами"; }
-                    if (slot.car > 0) { isAllowed = false; badge.innerText = "Занято машиной"; }
+                    if (slot.totalMoto > 0 || slot.car > 0) isAllowed = false;
                 } else if (type === "moto") {
-                    if (slot.car > 0) { isAllowed = false; badge.innerText = "Занято машиной"; }
-                    if (slot.totalMoto >= 3) { isAllowed = false; badge.innerText = "Мест нет"; }
+                    if (slot.car > 0 || slot.totalMoto >= 3) isAllowed = false;
                     
-                    if (level === "red" && (slot.red > 0 || slot.yellow > 0 || slot.green > 0)) {
-                        isAllowed = false; badge.innerText = "Новичок занимается один";
-                    }
+                    if (level === "red" && (slot.red > 0 || slot.yellow > 0 || slot.green > 0)) isAllowed = false;
                     if (level === "yellow") {
-                        if (slot.red > 0) { isAllowed = false; badge.innerText = "Занято новичком"; }
-                        if (slot.yellow >= 2) { isAllowed = false; badge.innerText = "Макс. 2 средних"; }
-                        if (slot.yellow === 1 && slot.green > 1) { isAllowed = false; badge.innerText = "Несовместимо"; }
+                        if (slot.red > 0 || slot.yellow >= 2 || (slot.yellow === 1 && slot.green > 1)) isAllowed = false;
                     }
                     if (level === "green") {
-                        if (slot.red === 1 && slot.green >= 2) { isAllowed = false; badge.innerText = "Макс. 2 профи с новичком"; }
-                        if (slot.yellow === 2 && slot.green >= 1) { isAllowed = false; badge.innerText = "Макс. 1 профи со средними"; }
+                        if ((slot.red === 1 && slot.green >= 2) || (slot.yellow === 2 && slot.green >= 1)) isAllowed = false;
                     }
                 }
 
                 if (!isAllowed) {
                     btn.disabled = true;
+                    badge.innerText = "Занято";
                 } else {
                     btn.onclick = function() {
                         document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
@@ -247,7 +243,11 @@
 
         const [date, time] = document.getElementById('selectedSlot').value.split('|');
         const name = encodeURIComponent(document.getElementById('name').value.trim());
-        const phone = encodeURIComponent(document.getElementById('phone').value.trim());
+        
+        // Магия против #ERROR!: принудительно ставим апостроф перед номером телефона
+        const rawPhone = document.getElementById('phone').value.trim();
+        const phone = encodeURIComponent("'" + rawPhone); 
+        
         const email = encodeURIComponent(document.getElementById('email').value.trim());
         const type = document.getElementById('type').value;
         const level = type === 'car' ? 'none' : document.getElementById('level').value;
