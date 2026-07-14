@@ -3,25 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Запись к Автоинструктору</title>
+    <title>Онлайн-запись к автоинструктору</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f4f6f9; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .box { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); width: 100%; max-width: 420px; margin-bottom: 20px; box-sizing: border-box; }
-        h2, h3 { text-align: center; color: #333; margin-top: 0; }
-        label { font-weight: bold; display: block; margin: 15px 0 5px; }
-        input, select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 15px; }
-        .slot-container { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; }
-        .slot-btn { padding: 15px; border: 2px solid #27ae60; background: #e8f5e9; color: #27ae60; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: bold; text-align: center; transition: 0.2s; }
-        .slot-btn:hover { background: #c8e6c9; }
-        .slot-btn.selected { background: #27ae60; color: white; border-color: #2196f3; box-shadow: 0 0 8px rgba(33,150,243,0.5); }
-        .slot-btn:disabled { background: #eee; border-color: #ccc; color: #888; cursor: not-allowed; }
-        button.submit-btn { width: 100%; background: #2196f3; color: white; border: none; padding: 14px; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top: 20px; font-weight: bold; }
-        button.submit-btn:disabled { background: #ccc; cursor: not-allowed; }
-        button.cancel-btn { width: 100%; background: #e74c3c; color: white; border: none; padding: 12px; border-radius: 6px; font-size: 15px; cursor: pointer; margin-top: 10px; }
-        #status, #cancelStatus { margin-top: 15px; padding: 12px; border-radius: 6px; text-align: center; display: none; font-weight: bold; font-size: 14px; }
-        .ok { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .err { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .info { color: #666; font-size: 12px; text-align: center; margin-top: 5px; }
+        :root { --primary: #2563eb; --primary-hover: #1d4ed8; --success: #10b981; --success-bg: #ecfdf5; --danger: #ef4444; --bg: #f8fafc; --text: #1e293b; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; box-sizing: border-box; }
+        .box { background: white; padding: 24px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); width: 100%; max-width: 440px; margin-bottom: 20px; box-sizing: border-box; border: 1px solid #e2e8f0; }
+        h2 { font-size: 20px; font-weight: 700; text-align: center; margin: 0 0 20px 0; color: #0f172a; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        h3 { font-size: 18px; margin: 0 0 15px 0; color: #0f172a; text-align: center; }
+        label { font-size: 14px; font-weight: 600; display: block; margin: 16px 0 6px; color: #475569; }
+        input, select { width: 100%; padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; font-size: 15px; background: #fff; transition: 0.2s; color: var(--text); }
+        input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
+        
+        /* Переключатель Типа транспорта */
+        .type-switcher { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 5px; }
+        .type-tab { padding: 12px; border: 2px solid #e2e8f0; background: #fff; border-radius: 10px; font-weight: 600; font-size: 15px; cursor: pointer; text-align: center; transition: 0.2s; }
+        .type-tab.active { border-color: var(--primary); background: #eff6ff; color: var(--primary); }
+        
+        /* Плитки выбора уровней подготовки */
+        .level-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+        .level-card { padding: 12px 14px; border: 2px solid #e2e8f0; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 14px; transition: 0.2s; background: white; }
+        .level-card:hover { border-color: #cbd5e1; }
+        .level-card.active { border-color: var(--primary); background: #eff6ff; font-weight: 600; }
+        
+        /* Стилизация групп дат и кнопок времени */
+        .date-group { margin-top: 15px; }
+        .date-header { font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 4px; }
+        .slot-container { display: grid; grid-template-columns: 1fr; gap: 8px; }
+        .slot-btn { padding: 14px; border: 1px solid #a7f3d0; background: var(--success-bg); color: #065f46; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; text-align: left; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; width: 100%; box-sizing: border-box; }
+        .slot-btn:hover:not(:disabled) { background: #d1fae5; border-color: #34d399; }
+        .slot-btn.selected { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 12px rgba(37,99,235,0.2); }
+        .slot-btn:disabled { background: #f1f5f9; border-color: #e2e8f0; color: #94a3b8; cursor: not-allowed; font-weight: 500; font-size: 13px; }
+        
+        button.submit-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 14px; border-radius: 10px; font-size: 16px; cursor: pointer; margin-top: 24px; font-weight: 700; transition: 0.2s; box-shadow: 0 4px 6px -1px rgba(37,99,235,0.2); }
+        button.submit-btn:hover:not(:disabled) { background: var(--primary-hover); }
+        button.submit-btn:disabled { background: #cbd5e1; color: #94a3b8; cursor: not-allowed; box-shadow: none; }
+        button.cancel-btn { width: 100%; background: #fff; color: var(--danger); border: 2px solid #fee2e2; padding: 12px; border-radius: 10px; font-size: 15px; cursor: pointer; margin-top: 10px; font-weight: 600; transition: 0.2s; }
+        button.cancel-btn:hover { background: #fef2f2; border-color: #fca5a5; }
+        
+        #status, #cancelStatus { margin-top: 16px; padding: 12px 16px; border-radius: 10px; text-align: center; display: none; font-weight: 600; font-size: 14px; line-height: 1.4; }
+        .ok { background: var(--success-bg); color: #065f46; border: 1px solid #a7f3d0; }
+        .err { background: #fef2f2; color: #991b1b; border: 1px solid #fee2e2; }
     </style>
 </head>
 <body>
@@ -39,24 +60,25 @@
         <input type="tel" id="phone" required value="+7 " placeholder="+7 (900) 000-00-00">
 
         <label>Тип занятия:</label>
-        <select id="type" required onchange="updateInterface()">
-            <option value="moto">🏍️ Мотоцикл</option>
-            <option value="car">🚗 Автомобиль</option>
-        </select>
+        <div class="type-switcher">
+            <div class="type-tab active" id="tab-moto" onclick="setVehicleType('moto')">🏍️ Мотоцикл</div>
+            <div class="type-tab" id="tab-car" onclick="setVehicleType('car')">🚗 Автомобиль</div>
+        </div>
+        <input type="hidden" id="type" value="moto">
 
         <div id="motoLevelBlock">
             <label>Ваш уровень подготовки:</label>
-            <select id="level" onchange="updateInterface()">
-                <option value="green">🟢 Уверенно катаюсь</option>
-                <option value="yellow">🟡 Я средний</option>
-                <option value="red">🔴 Я новичок</option>
-            </select>
+            <div class="level-grid">
+                <div class="level-card active" id="lvl-green" onclick="setLevel('green')"><span>🟢</span> Уверенно катаюсь</div>
+                <div class="level-card" id="lvl-yellow" onclick="setLevel('yellow')"><span>🟡</span> Я средний</div>
+                <div class="level-card" id="lvl-red" onclick="setLevel('red')"><span>🔴</span> Я новичок</div>
+            </div>
+            <input type="hidden" id="level" value="green">
         </div>
 
-        <label style="margin-bottom: 0;">Выберите доступное время:</label>
-        <div class="info">Кнопки обновляются сами под ваш уровень</div>
-        <div id="slotsBox" class="slot-container">
-            <div>Загрузка расписания...</div>
+        <label style="margin-bottom: 2px;">Выберите доступное время:</label>
+        <div id="slotsBox">
+            <div style="text-align: center; color: #64748b; padding: 10px;">Загрузка расписания...</div>
         </div>
 
         <input type="hidden" id="selectedSlot" required>
@@ -65,10 +87,9 @@
     <div id="status"></div>
 </div>
 
-<div class="box" style="border-top: 4px solid #e74c3c;">
+<div class="box" style="border-top: 4px solid var(--danger);">
     <h3>❌ Отмена записи</h3>
-    <p style="font-size: 13px; color: #666; text-align: center;">Введите только цифры секретного кода для отмены занятия.</p>
-    <input type="text" id="cancelCode" placeholder="Пример: 584321">
+    <input type="text" id="cancelCode" placeholder="6-значный цифровой код">
     <button type="button" class="cancel-btn" onclick="cancelBooking()">Отменить занятие</button>
     <div id="cancelStatus"></div>
 </div>
@@ -80,17 +101,28 @@
     document.getElementById('phone').addEventListener('input', function(e) {
         let val = e.target.value;
         if (!val.startsWith('+7 ')) {
-            if (val.startsWith('8')) {
-                e.target.value = '+7 ' + val.substring(1);
-            } else {
-                e.target.value = '+7 ';
-            }
+            e.target.value = val.startsWith('8') ? '+7 ' + val.substring(1) : '+7 ';
         }
     });
 
     document.getElementById('cancelCode').addEventListener('input', function(e) {
-        e.target.value = e.target.value.replace(/\D/g, '');
+        e.target.value = e.target.value.replace(/\D/g, '').substring(0,6);
     });
+
+    function setVehicleType(v) {
+        document.getElementById('type').value = v;
+        document.getElementById('tab-moto').classList.toggle('active', v === 'moto');
+        document.getElementById('tab-car').classList.toggle('active', v === 'car');
+        updateInterface();
+    }
+
+    function setLevel(l) {
+        document.getElementById('level').value = l;
+        ['green', 'yellow', 'red'].forEach(id => {
+            document.getElementById('lvl-' + id).classList.toggle('active', id === l);
+        });
+        updateInterface();
+    }
 
     function loadSlots() {
         const oldScript = document.getElementById('jsonp-slots');
@@ -117,65 +149,87 @@
         slotsBox.innerHTML = '';
         
         if (!globalSlotsData || globalSlotsData.length === 0) {
-            slotsBox.innerHTML = '<div>Нет свободных слотов в календаре</div>';
+            slotsBox.innerHTML = '<div style="text-align: center; color: #64748b; padding: 10px;">Нет свободных слотов в календаре</div>';
             submitBtn.disabled = true;
             return;
         }
 
-        globalSlotsData.forEach((slot) => {
-            let btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'slot-btn';
-            
-            let dateParts = slot.date.split('-');
-            let months = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
-            let day = parseInt(dateParts[2], 10);
-            let monthIdx = parseInt(dateParts[1], 10) - 1;
-            let formattedDate = day + ' ' + months[monthIdx];
-            
-            btn.innerText = `${formattedDate} в ${slot.time}`;
-            
-            let isAllowed = true;
-            let reason = "";
+        // Группируем слоты по датам
+        let grouped = {};
+        globalSlotsData.forEach(slot => {
+            if (!grouped[slot.date]) grouped[slot.date] = [];
+            grouped[slot.date].push(slot);
+        });
 
-            if (type === "car") {
-                if (slot.totalMoto > 0) { isAllowed = false; reason = " (Занято мотоциклами)"; }
-                if (slot.car > 0) { isAllowed = false; reason = " (Занято машиной)"; }
-            } else if (type === "moto") {
-                if (slot.car > 0) { isAllowed = false; reason = " (Занято машиной)"; }
-                if (slot.totalMoto >= 3) { isAllowed = false; reason = " (Все места заняты)"; }
-                
-                // ИСПРАВЛЕННАЯ ГИБКАЯ ЛОГИКА ДЛЯ НОВИЧКА (КРАСНОГО)
-                if (level === "red") {
-                    if (slot.red > 0) { isAllowed = false; reason = " (Новичок может быть только один)"; }
-                    if (slot.yellow > 0) { isAllowed = false; reason = " (В слоте занимается средний)"; }
-                    if (slot.green > 2) { isAllowed = false; reason = " (С новичком макс. 2 уверенных)"; }
-                }
-                
-                if (level === "yellow") {
-                    if (slot.red > 0) { isAllowed = false; reason = " (Занято новичком)"; }
-                    if (slot.yellow >= 2) { isAllowed = false; reason = " (Макс. 2 средних)"; }
-                    if (slot.yellow === 1 && slot.green > 1) { isAllowed = false; reason = " (Несовместимый состав)"; }
-                }
-                
-                if (level === "green") {
-                    if (slot.red === 1 && slot.green >= 2) { isAllowed = false; reason = " (С новичком макс. 2 профи)"; }
-                    if (slot.yellow === 2 && slot.green >= 1) { isAllowed = false; reason = " (Со средними макс. 1 профи)"; }
-                }
-            }
+        // Строим красивый интерфейс по группам дней
+        Object.keys(grouped).forEach(dateStr => {
+            let groupDiv = document.createElement('div');
+            groupDiv.className = 'date-group';
+            
+            let dateObj = new Date(dateStr);
+            let headerText = dateObj.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
+            
+            let header = document.createElement('div');
+            header.className = 'date-header';
+            header.innerText = headerText;
+            groupDiv.appendChild(header);
 
-            if (!isAllowed) {
-                btn.disabled = true;
-                btn.innerText += reason;
-            } else {
-                btn.onclick = function() {
-                    document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
-                    btn.classList.add('selected');
-                    document.getElementById('selectedSlot').value = `${slot.date}|${slot.time}`;
-                    submitBtn.disabled = false;
-                };
-            }
-            slotsBox.appendChild(btn);
+            let container = document.createElement('div');
+            container.className = 'slot-container';
+
+            grouped[dateStr].forEach(slot => {
+                let btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'slot-btn';
+                
+                let timeText = document.createElement('span');
+                timeText.innerText = slot.time;
+                btn.appendChild(timeText);
+                
+                let badge = document.createElement('span');
+                badge.style.fontSize = '12px';
+                badge.style.opacity = '0.8';
+                badge.innerText = 'Свободно';
+                btn.appendChild(badge);
+                
+                let isAllowed = true;
+
+                if (type === "car") {
+                    if (slot.totalMoto > 0) { isAllowed = false; badge.innerText = "Занято мотоциклами"; }
+                    if (slot.car > 0) { isAllowed = false; badge.innerText = "Занято машиной"; }
+                } else if (type === "moto") {
+                    if (slot.car > 0) { isAllowed = false; badge.innerText = "Занято машиной"; }
+                    if (slot.totalMoto >= 3) { isAllowed = false; badge.innerText = "Мест нет"; }
+                    
+                    if (level === "red" && (slot.red > 0 || slot.yellow > 0 || slot.green > 0)) {
+                        isAllowed = false; badge.innerText = "Новичок занимается один";
+                    }
+                    if (level === "yellow") {
+                        if (slot.red > 0) { isAllowed = false; badge.innerText = "Занято новичком"; }
+                        if (slot.yellow >= 2) { isAllowed = false; badge.innerText = "Макс. 2 средних"; }
+                        if (slot.yellow === 1 && slot.green > 1) { isAllowed = false; badge.innerText = "Несовместимо"; }
+                    }
+                    if (level === "green") {
+                        if (slot.red === 1 && slot.green >= 2) { isAllowed = false; badge.innerText = "Макс. 2 профи с новичком"; }
+                        if (slot.yellow === 2 && slot.green >= 1) { isAllowed = false; reason = "Макс. 1 профи со средними"; }
+                    }
+                }
+
+                if (!isAllowed) {
+                    btn.disabled = true;
+                } else {
+                    btn.onclick = function() {
+                        document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
+                        btn.classList.add('selected');
+                        document.getElementById('selectedSlot').value = `${slot.date}|${slot.time}`;
+                        submitBtn.disabled = false;
+                    };
+                }
+                container.appendChild(btn);
+            });
+            
+            groupDiv.appendChild(container);
+            slotsBox.appendChild(groupDiv);
         });
     }
 
@@ -210,6 +264,8 @@
             status.innerText = response.message;
             document.getElementById('mainForm').reset();
             document.getElementById('phone').value = "+7 ";
+            setLevel('green');
+            setVehicleType('moto');
             loadSlots();
         } else {
             status.className = 'err';
