@@ -129,15 +129,19 @@
     
     let globalSlotsData = [];
 
+    // УМНАЯ МАСКА: Разрешает вводить только российские мобильные 10 цифр после +7
     document.getElementById('phone').addEventListener('input', function(e) {
-        let val = e.target.value;
-        if (!val.startsWith('+7 ')) {
-            if (val.startsWith('8')) {
-                e.target.value = '+7 ' + val.substring(1);
-            } else {
-                e.target.value = '+7 ';
-            }
-        }
+        let matrix = '+7 (9xx) xxx-xx-xx',
+            i = 0,
+            def = matrix.replace(/\D/g, ""),
+            val = this.value.replace(/\D/g, "");
+        
+        // Предотвращаем удаление +7
+        if (def.length >= val.length) val = def;
+        
+        this.value = matrix.replace(/./g, function(a) {
+            return /[x\d]/.test(a) && i < val.length ? val.charAt(i++) : i >= val.length ? "" : a;
+        });
     });
 
     document.getElementById('cancelCode').addEventListener('input', function(e) {
@@ -199,12 +203,11 @@
             let groupDiv = document.createElement('div');
             groupDiv.className = 'date-group';
             
-        let dateParts = dateStr.split('-');
-        let months = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
-        let day = parseInt(dateParts[2], 10);
-        let monthIdx = parseInt(dateParts[1], 10) - 1;
-        let formattedDate = day + ' ' + months[monthIdx];
-
+            let dateParts = dateStr.split('-');
+            let months = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+            let day = parseInt(dateParts[0], 10);
+            let monthIdx = parseInt(dateParts[1], 10) - 1;
+            let formattedDate = day + ' ' + months[monthIdx];
             
             let header = document.createElement('div');
             header.className = 'date-header';
@@ -269,13 +272,14 @@
         const status = document.getElementById('status');
         const btn = document.getElementById('submitBtn');
         
-        // ЖЕСТКАЯ ПРОВЕКА НА ОБЯЗАТЕЛЬНЫЙ ВВОД ТЕЛЕФОНА
         const rawPhone = document.getElementById('phone').value.trim();
-        // Если в поле только "+7" или "+7 " (меньше 4 символов после очистки от пробелов), блокируем форму
-        if (rawPhone.replace(/\s/g, '').length <= 2) {
+        const digitsCount = rawPhone.replace(/\D/g, "").length;
+
+        // ЖЕСТКАЯ ПРОВЕРКА НА 11 ЦИФР ПОЛНОГО РОССИЙСКОГО НОМЕРА (7 + 10 цифр мобильного)
+        if (digitsCount !== 11) {
             status.style.display = 'block';
             status.className = 'err';
-            status.innerText = 'Ошибка: Пожалуйста, введите ваш номер телефона полностью!';
+            status.innerText = 'Ошибка: Пожалуйста, введите корректный российский номер из 10 цифр!';
             return;
         }
 
