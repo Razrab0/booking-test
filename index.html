@@ -240,7 +240,7 @@
                 } else if (type === "moto") {
                     if (slot.car > 0 || slot.totalMoto >= 3) isAllowed = false;
                     
-                    if (level === "red" && (slot.red > 0 || slot.yellow > 0 || slot.green > 0)) isAllowed = false;
+                    if (level === "red" && (slot.red > 0 || slot.yellow > 0 || slot.green > 2)) isAllowed = false;
                     if (level === "yellow") {
                         if (slot.red > 0 || slot.yellow >= 2 || (slot.yellow === 1 && slot.green > 1)) isAllowed = false;
                     }
