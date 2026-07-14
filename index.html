@@ -49,11 +49,10 @@
 </head>
 <body>
 
-<!-- Блок интерактивной инструкции -->
-<div class="box" style="padding: 15px; width: 100%; max-width: 100%; margin-bottom: 15px; background: #f8fafc; border-color: #cbd5e1;">
-
-    <div class="info-trigger" onclick="toggleInfo()">ℹ️ Как пользоваться сайтом (Инструкция)</div>
-    <div class="info-content" id="infoBlock">
+<!-- ИДЕАЛЬНО ВЫРОВНЕННЫЙ БЛОК ИНСТРУКЦИИ -->
+<div class="box" style="padding: 16px; width: 100%; max-width: 440px; margin: 0 auto 15px auto; background: #f8fafc; border-color: #cbd5e1;">
+    <div class="info-trigger" style="margin-bottom: 0;" onclick="toggleInfo()">ℹ️ Как пользоваться сайтом (Инструкция)</div>
+    <div class="info-content" id="infoBlock" style="margin-top: 15px; margin-bottom: 0;">
         <strong>📝 Запись на занятие:</strong>
         <ol>
             <li>Заполните ваше Имя, Фамилию и <strong>обязательно Телефон</strong>.</li>
@@ -61,7 +60,7 @@
             <li>Нажмите на подходящее зеленое время (оно станет синим) и нажмите кнопку снизу.</li>
             <li><strong>Важно:</strong> Запишите или заскриньте 6-значный код отмены с экрана!</li>
         </ol>
-        <strong>❌ Самостоятельная отмена:</strong>
+        <strong style="display: block; margin-top: 10px;">❌ Самостоятельная отмена:</strong>
         <ol>
             <li>Прокрутите сайт в самый низ, введите код и нажмите «Отменить».</li>
             <li>Отмена работает строго <strong>не позднее чем за 24 часа</strong> до занятия. Если осталось меньше суток — отмена заблокируется, звоните инструктору.</li>
@@ -77,6 +76,7 @@
 </script>
 
 <div class="box">
+
     <h2>📅 Онлайн-запись</h2>
     <form id="mainForm">
         <label>Ваше Имя и Фамилия:</label>
