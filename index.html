@@ -14,18 +14,15 @@
         input, select { width: 100%; padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; font-size: 15px; background: #fff; transition: 0.2s; color: var(--text); }
         input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
         
-        /* Переключатель Типа транспорта */
         .type-switcher { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 5px; }
         .type-tab { padding: 12px; border: 2px solid #e2e8f0; background: #fff; border-radius: 10px; font-weight: 600; font-size: 15px; cursor: pointer; text-align: center; transition: 0.2s; }
         .type-tab.active { border-color: var(--primary); background: #eff6ff; color: var(--primary); }
         
-        /* Плитки выбора уровней подготовки */
         .level-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
         .level-card { padding: 12px 14px; border: 2px solid #e2e8f0; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 14px; transition: 0.2s; background: white; }
         .level-card:hover { border-color: #cbd5e1; }
         .level-card.active { border-color: var(--primary); background: #eff6ff; font-weight: 600; }
         
-        /* Стилизация групп дат и кнопок времени */
         .date-group { margin-top: 15px; }
         .date-header { font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 4px; }
         .slot-container { display: grid; grid-template-columns: 1fr; gap: 8px; }
@@ -40,9 +37,10 @@
         button.cancel-btn { width: 100%; background: #fff; color: var(--danger); border: 2px solid #fee2e2; padding: 12px; border-radius: 10px; font-size: 15px; cursor: pointer; margin-top: 10px; font-weight: 600; transition: 0.2s; }
         button.cancel-btn:hover { background: #fef2f2; border-color: #fca5a5; }
         
-        #status, #cancelStatus { margin-top: 16px; padding: 12px 16px; border-radius: 10px; text-align: center; display: none; font-weight: 600; font-size: 14px; line-height: 1.4; }
+        #status, #cancelStatus { margin-top: 15px; padding: 12px 16px; border-radius: 10px; text-align: center; display: none; font-weight: 600; font-size: 14px; line-height: 1.4; }
         .ok { background: var(--success-bg); color: #065f46; border: 1px solid #a7f3d0; }
         .err { background: #fef2f2; color: #991b1b; border: 1px solid #fee2e2; }
+        .info { color: #666; font-size: 12px; text-align: center; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -54,9 +52,9 @@
         <input type="text" id="name" required placeholder="Иван Иванов">
 
         <label>Email (для приглашения):</label>
-        <input type="email" id="email" required placeholder="example@gmail.com">
+        <input type="email" id="email" placeholder="example@gmail.com">
 
-        <label>Телефон:</label>
+        <label>Telephone:</label>
         <input type="tel" id="phone" required value="+7 " placeholder="+7 (900) 000-00-00">
 
         <label>Тип занятия:</label>
@@ -94,14 +92,18 @@
     <div id="cancelStatus"></div>
 </div>
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyBjgFD3lK9gm_pfwx6NLp3y_gdpVm_NMGQs33ve3fKp9LdAcrPd6kKzTHVlquIXtd1/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxtbE7nDLuvzp60jCkQaAluQZ7CiFEd-fGLpLOJQNiiZw7Ul8s-G1rEANP2OrUEeRt_/exec';
     
     let globalSlotsData = [];
 
     document.getElementById('phone').addEventListener('input', function(e) {
         let val = e.target.value;
         if (!val.startsWith('+7 ')) {
-            e.target.value = val.startsWith('8') ? '+7 ' + val.substring(1) : '+7 ';
+            if (val.startsWith('8')) {
+                e.target.value = '+7 ' + val.substring(1);
+            } else {
+                e.target.value = '+7 ';
+            }
         }
     });
 
@@ -154,24 +156,25 @@
             return;
         }
 
-        // Группируем слоты по датам
         let grouped = {};
         globalSlotsData.forEach(slot => {
             if (!grouped[slot.date]) grouped[slot.date] = [];
             grouped[slot.date].push(slot);
         });
 
-        // Строим красивый интерфейс по группам дней
         Object.keys(grouped).forEach(dateStr => {
             let groupDiv = document.createElement('div');
             groupDiv.className = 'date-group';
             
-            let dateObj = new Date(dateStr);
-            let headerText = dateObj.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
+            let dateParts = dateStr.split('-');
+            let months = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+            let day = parseInt(dateParts[2], 10);
+            let monthIdx = parseInt(dateParts[1], 10) - 1;
+            let formattedDate = day + ' ' + months[monthIdx];
             
             let header = document.createElement('div');
             header.className = 'date-header';
-            header.innerText = headerText;
+            header.innerText = formattedDate;
             groupDiv.appendChild(header);
 
             let container = document.createElement('div');
@@ -211,7 +214,7 @@
                     }
                     if (level === "green") {
                         if (slot.red === 1 && slot.green >= 2) { isAllowed = false; badge.innerText = "Макс. 2 профи с новичком"; }
-                        if (slot.yellow === 2 && slot.green >= 1) { isAllowed = false; reason = "Макс. 1 профи со средними"; }
+                        if (slot.yellow === 2 && slot.green >= 1) { isAllowed = false; badge.innerText = "Макс. 1 профи со средними"; }
                     }
                 }
 
