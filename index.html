@@ -14,9 +14,9 @@
         input, select { width: 100%; padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; font-size: 15px; background: #fff; color: var(--text); }
         input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
         
-        .type-switcher { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 5px; }
+        .type-switcher { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 5px; }
         .type-tab { padding: 12px; border: 2px solid #e2e8f0; background: #fff; border-radius: 10px; font-weight: 600; font-size: 15px; cursor: pointer; text-align: center; transition: 0.2s; }
-        .type-tab.active { border-color: var(--primary); background: #eff6ff; color: var(--primary); }
+        .type-tab.active { border-color: var(--primary) !important; background: #eff6ff !important; color: var(--primary) !important; box-shadow: 0 4px 12px rgba(37,99,235,0.08); }
         
         .level-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
         .level-card { padding: 12px 14px; border: 2px solid #e2e8f0; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 14px; background: white; }
@@ -39,8 +39,6 @@
         .ok { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
         .err { background: #fef2f2; color: #991b1b; border: 1px solid #fee2e2; }
         
-        /* Стили для спойлера инструкции */
-        /* СТАЛО (идеально ровно) */
         .info-trigger { box-sizing: border-box; width: 100%; background: #f1f5f9; border: 1px dashed #cbd5e1; padding: 12px; border-radius: 10px; font-size: 13px; font-weight: 600; color: #475569; cursor: pointer; text-align: center; margin-bottom: 0; transition: 0.2s; }
         .info-trigger:hover { background: #e2e8f0; }
         .info-content { display: none; background: #fafafa; border: 1px solid #e2e8f0; padding: 14px; border-radius: 10px; font-size: 13px; line-height: 1.5; color: #475569; margin-bottom: 15px; }
@@ -50,21 +48,20 @@
 </head>
 <body>
 
-<!-- ИДЕАЛЬНО ВЫРОВНЕННЫЙ БЛОК ИНСТРУКЦИИ -->
 <div class="box" style="padding: 16px; width: 100%; max-width: 440px; margin: 0 auto 15px auto; background: #f8fafc; border-color: #cbd5e1;">
     <div class="info-trigger" style="margin-bottom: 0;" onclick="toggleInfo()">ℹ️ Как пользоваться сайтом (Инструкция)</div>
     <div class="info-content" id="infoBlock" style="margin-top: 15px; margin-bottom: 0;">
         <strong>📝 Запись на занятие:</strong>
         <ol>
             <li>Заполните ваше Имя, Фамилию и <strong>обязательно Телефон</strong>.</li>
-            <li>Выберите тип (Мотоцикл или Машина) и ваш уровень подготовки.</li>
-            <li>Нажмите на подходящее зеленое время (оно станет синим) и нажмите кнопку снизу.</li>
+            <li>Выберите категорию, а затем конкретную модель мотоцикла или машины.</li>
+            <li>Нажмите на подходящее зеленое время (оно станет синей кнопкой) и нажмите кнопку снизу.</li>
             <li><strong>Важно:</strong> Запишите или заскриньте 6-значный код отмены с экрана!</li>
         </ol>
         <strong style="display: block; margin-top: 10px;">❌ Самостоятельная отмена:</strong>
         <ol>
             <li>Прокрутите сайт в самый низ, введите код и нажмите «Отменить».</li>
-            <li>Отмена работает строго <strong>не позднее чем за 24 часа</strong> до занятия. Если осталось меньше суток — отмена заблокируется, звоните инструктору.</li>
+            <li>Отмена работает строго <strong>не позднее чем за 24 часа</strong> до занятия.</li>
         </ol>
     </div>
 </div>
@@ -77,7 +74,6 @@
 </script>
 
 <div class="box">
-
     <h2>📅 Онлайн-запись</h2>
     <form id="mainForm">
         <label>Ваше Имя и Фамилия:</label>
@@ -89,36 +85,62 @@
         <label>Телефон:</label>
         <input type="tel" id="phone" required value="+7 " placeholder="+7 (900) 000-00-00">
 
-                      <label>Тип занятия:</label>
-        <div class="type-switcher" style="grid-template-columns: 1fr; gap: 12px;">
-            <!-- Кнопка Мотоцикла -->
-            <div class="type-tab active" id="tab-moto" onclick="setVehicleType('moto')" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px;">
-                <span style="font-size: 20px;">🏍️</span> Мотоцикл (Все уровни)
-            </div>
-            
-            <!-- Плашка Lada Granta (МКПП) — Ссылка на внутренний файл -->
-            <div class="type-tab" id="tab-car_manual" onclick="setVehicleType('car_manual')" style="display: flex; align-items: center; gap: 15px; padding: 8px 14px; text-align: left;">
-                <img src="granta.jpg" alt="Granta" style="width: 70px; height: 45px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1;">
-                <div>
-                    <div style="font-weight: 700; font-size: 15px; color: #0f172a;">Lada Granta</div>
-                    <div style="font-size: 12px; color: #64748b; font-weight: 500;">Механическая коробка (МКПП)</div>
-                </div>
-            </div>
+        <label>Категория обучения:</label>
+        <div class="type-switcher" style="grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+            <div class="type-tab active" id="tab-cat-moto" onclick="setCategory('moto')" style="padding: 12px; font-weight: 700; text-align: center;">🏍️ Мотоциклы</div>
+            <div class="type-tab" id="tab-cat-car" onclick="setCategory('car')" style="padding: 12px; font-weight: 700; text-align: center;">🚗 Автомобили</div>
+        </div>
 
-            <!-- Плашка Nissan Murano (АКПП) — Ссылка на внутренний файл -->
-            <div class="type-tab" id="tab-car_auto" onclick="setVehicleType('car_auto')" style="display: flex; align-items: center; gap: 15px; padding: 8px 14px; text-align: left;">
-                <img src="murano.jpg" alt="Murano" style="width: 70px; height: 45px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1;">
-                <div>
-                    <div style="font-weight: 700; font-size: 15px; color: #0f172a;">Nissan Murano</div>
-                    <div style="font-size: 12px; color: #64748b; font-weight: 500;">Автоматическая коробка (АКПП)</div>
+        <div id="motoBikesBlock" style="display: block; margin-bottom: 15px;">
+            <label>Выберите мотоцикл:</label>
+            <div class="type-switcher" style="grid-template-columns: 1fr; gap: 10px;">
+                <div class="type-tab active" id="bike-boxer" onclick="setBike('Bajaj Boxer')" style="display: flex; align-items: center; gap: 15px; padding: 8px 14px; text-align: left;">
+                    <img src="boxer.jpg" alt="Boxer" style="width: 70px; height: 45px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1;">
+                    <div>
+                        <div style="font-weight: 700; font-size: 14px; color: #0f172a;">Bajaj Boxer</div>
+                        <div style="font-size: 11px; color: #64748b; font-weight: 500;">Удобный и надежный</div>
+                    </div>
+                </div>
+                <div class="type-tab" id="bike-fuego" onclick="setBike('Fuego Rambler 250')" style="display: flex; align-items: center; gap: 15px; padding: 8px 14px; text-align: left;">
+                    <img src="fuego.jpg" alt="Fuego" style="width: 70px; height: 45px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1;">
+                    <div>
+                        <div style="font-weight: 700; font-size: 14px; color: #0f172a;">Fuego Rambler 250</div>
+                        <div style="font-size: 11px; color: #64748b; font-weight: 500;">Стильный эндуро</div>
+                    </div>
+                </div>
+                <div class="type-tab" id="bike-yamaha" onclick="setBike('Yamaha YBR 125')" style="display: flex; align-items: center; gap: 15px; padding: 8px 14px; text-align: left;">
+                    <img src="yamaha.jpg" alt="Yamaha" style="width: 70px; height: 45px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1;">
+                    <div>
+                        <div style="font-weight: 700; font-size: 14px; color: #0f172a;">Yamaha YBR 125</div>
+                        <div style="font-size: 11px; color: #64748b; font-weight: 500;">Классика обучения</div>
+                    </div>
                 </div>
             </div>
         </div>
 
+        <div id="carVehiclesBlock" style="display: none; margin-bottom: 15px;">
+            <label>Выберите автомобиль:</label>
+            <div class="type-switcher" style="grid-template-columns: 1fr; gap: 10px;">
+                <div class="type-tab" id="tab-car_manual" onclick="setVehicleType('car_manual')" style="display: flex; align-items: center; gap: 15px; padding: 8px 14px; text-align: left;">
+                    <img src="granta.jpg" alt="Granta" style="width: 70px; height: 45px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1;">
+                    <div>
+                        <div style="font-weight: 700; font-size: 14px; color: #0f172a;">Lada Granta</div>
+                        <div style="font-size: 11px; color: #64748b; font-weight: 500;">Механическая коробка (МКПП)</div>
+                    </div>
+                </div>
+                <div class="type-tab" id="tab-car_auto" onclick="setVehicleType('car_auto')" style="display: flex; align-items: center; gap: 15px; padding: 8px 14px; text-align: left;">
+                    <img src="murano.jpg" alt="Murano" style="width: 70px; height: 45px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1;">
+                    <div>
+                        <div style="font-weight: 700; font-size: 14px; color: #0f172a;">Nissan Murano</div>
+                        <div style="font-size: 11px; color: #64748b; font-weight: 500;">Автоматическая коробка (АКПП)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <input type="hidden" id="type" value="moto">
-
-        <div id="motoLevelBlock">
+        <input type="hidden" id="selectedBike" value="Bajaj Boxer">
+                <div id="motoLevelBlock">
             <label>Ваш уровень подготовки:</label>
             <div class="level-grid">
                 <div class="level-card active" id="lvl-green" onclick="setLevel('green')"><span>🟢</span> Уверенно катаюсь</div>
@@ -145,22 +167,20 @@
     <button type="button" class="cancel-btn" onclick="cancelBooking()">Отменить занятие</button>
     <div id="cancelStatus"></div>
 </div>
+
 <script>
-    // ВСТАВЬТЕ СЮДА ВАШУ ССЫЛКУ ИЗ GOOGLE APPS SCRIPT МЕЖДУ КАВЫЧЕК
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyr4vayrNz3X_0zMx_VzyHrB7n80t6wQPezIUOD-9tQAwlPR8ThBu7_8i5Sy9hD1JkQ/exec';
+    const API_URL = 'https://google.com';
     
     let globalSlotsData = [];
+    let currentCategory = 'moto';
 
-    // УМНАЯ МАСКА: Разрешает вводить только российские мобильные 10 цифр после +7
+    // УМНАЯ МАСКА НА РОССИЙСКИЙ НОМЕР ТЕЛЕФОНА
     document.getElementById('phone').addEventListener('input', function(e) {
         let matrix = '+7 (9xx) xxx-xx-xx',
             i = 0,
             def = matrix.replace(/\D/g, ""),
             val = this.value.replace(/\D/g, "");
-        
-        // Предотвращаем удаление +7
         if (def.length >= val.length) val = def;
-        
         this.value = matrix.replace(/./g, function(a) {
             return /[x\d]/.test(a) && i < val.length ? val.charAt(i++) : i >= val.length ? "" : a;
         });
@@ -170,14 +190,36 @@
         e.target.value = e.target.value.replace(/\D/g, '').substring(0,6);
     });
 
-    function setVehicleType(v) {
-    document.getElementById('type').value = v;
-    document.getElementById('tab-moto').classList.toggle('active', v === 'moto');
-    document.getElementById('tab-car_manual').classList.toggle('active', v === 'car_manual');
-    document.getElementById('tab-car_auto').classList.toggle('active', v === 'car_auto');
-    updateInterface();
+    function setCategory(cat) {
+        currentCategory = cat;
+        document.getElementById('tab-cat-moto').classList.toggle('active', cat === 'moto');
+        document.getElementById('tab-cat-car').classList.toggle('active', cat === 'car');
+        
+        document.getElementById('motoBikesBlock').style.display = cat === 'moto' ? 'block' : 'none';
+        document.getElementById('carVehiclesBlock').style.display = cat === 'car' ? 'block' : 'none';
+        
+        if (cat === 'moto') {
+            setBike(document.getElementById('selectedBike').value || 'Bajaj Boxer');
+        } else {
+            setVehicleType(document.getElementById('type').value.startsWith('car_') ? document.getElementById('type').value : 'car_manual');
+        }
+        updateInterface();
     }
 
+    function setVehicleType(v) {
+        document.getElementById('type').value = v;
+        document.getElementById('tab-car_manual').classList.toggle('active', v === 'car_manual');
+        document.getElementById('tab-car_auto').classList.toggle('active', v === 'car_auto');
+        updateInterface();
+    }
+
+    function setBike(b) {
+        document.getElementById('type').value = 'moto';
+        document.getElementById('selectedBike').value = b;
+        document.getElementById('bike-boxer').classList.toggle('active', b === 'Bajaj Boxer');
+        document.getElementById('bike-fuego').classList.toggle('active', b === 'Fuego Rambler 250');
+        document.getElementById('bike-yamaha').classList.toggle('active', b === 'Yamaha YBR 125');
+    }
 
     function setLevel(l) {
         document.getElementById('level').value = l;
@@ -200,15 +242,13 @@
         globalSlotsData = slots;
         updateInterface();
     }
-
     function updateInterface() {
         const type = document.getElementById('type').value;
         const level = document.getElementById('level').value;
         const slotsBox = document.getElementById('slotsBox');
-        const motoBlock = document.getElementById('motoLevelBlock');
         const submitBtn = document.getElementById('submitBtn');
         
-        motoBlock.style.display = type === 'moto' ? 'block' : 'none';
+        document.getElementById('motoLevelBlock').style.display = currentCategory === 'moto' ? 'block' : 'none';
         slotsBox.innerHTML = '';
         
         if (!globalSlotsData || globalSlotsData.length === 0) {
@@ -226,15 +266,14 @@
         Object.keys(grouped).forEach(dateStr => {
             let groupDiv = document.createElement('div');
             groupDiv.className = 'date-group';
-
+            
             let dateParts = dateStr.split('-');
             let months = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
             let day = parseInt(dateParts[2], 10);
             let monthIdx = parseInt(dateParts[1], 10) - 1;
             let formattedDate = day + ' ' + months[monthIdx];
-
+            
             let header = document.createElement('div');
-
             header.className = 'date-header';
             header.innerText = formattedDate;
             groupDiv.appendChild(header);
@@ -263,7 +302,6 @@
                     if (slot.totalMoto > 0 || slot.car > 0) isAllowed = false;
                 } else if (type === "moto") {
                     if (slot.car > 0 || slot.totalMoto >= 3) isAllowed = false;
-                    
                     if (level === "red" && (slot.red > 0 || slot.yellow > 0 || slot.green > 2)) isAllowed = false;
                     if (level === "yellow") {
                         if (slot.red > 0 || slot.yellow >= 2 || (slot.yellow === 1 && slot.green > 1)) isAllowed = false;
@@ -282,6 +320,36 @@
                         btn.classList.add('selected');
                         document.getElementById('selectedSlot').value = `${slot.date}|${slot.time}`;
                         submitBtn.disabled = false;
+                        
+                        if (currentCategory === 'moto') {
+                            const busyBikes = slot.bikes || [];
+                            const allBikes = ['Bajaj Boxer', 'Fuego Rambler 250', 'Yamaha YBR 125'];
+                            const bikeIds = { 'Bajaj Boxer': 'bike-boxer', 'Fuego Rambler 250': 'bike-fuego', 'Yamaha YBR 125': 'bike-yamaha' };
+                            
+                            allBikes.forEach(b => {
+                                let card = document.getElementById(bikeIds[b]);
+                                if (card) {
+                                    card.style.opacity = '1';
+                                    card.style.pointerEvents = 'auto';
+                                    card.style.background = 'white';
+                                }
+                            });
+                            
+                            busyBikes.forEach(b => {
+                                if (bikeIds[b] && document.getElementById(bikeIds[b])) {
+                                    let card = document.getElementById(bikeIds[b]);
+                                    card.style.opacity = '0.4';
+                                    card.style.pointerEvents = 'none';
+                                    card.style.background = '#f1f5f9';
+                                    card.classList.remove('active');
+                                }
+                            });
+                            
+                            const freeBikes = allBikes.filter(b => !busyBikes.includes(b));
+                            if (freeBikes.length > 0 && busyBikes.includes(document.getElementById('selectedBike').value)) {
+                                setBike(freeBikes[0]);
+                            }
+                        }
                     };
                 }
                 container.appendChild(btn);
@@ -300,7 +368,6 @@
         const rawPhone = document.getElementById('phone').value.trim();
         const digitsCount = rawPhone.replace(/\D/g, "").length;
 
-        // ЖЕСТКАЯ ПРОВЕРКА НА 11 ЦИФР ПОЛНОГО РОССИЙСКОГО НОМЕРА (7 + 10 цифр мобильного)
         if (digitsCount !== 11) {
             status.style.display = 'block';
             status.className = 'err';
@@ -319,12 +386,13 @@
         const email = encodeURIComponent(document.getElementById('email').value.trim());
         const type = document.getElementById('type').value;
         const level = (type === 'car_manual' || type === 'car_auto') ? 'none' : document.getElementById('level').value;
+        const bike = type === 'moto' ? encodeURIComponent(document.getElementById('selectedBike').value) : '';
 
         const oldBookingScript = document.getElementById('jsonp-booking');
         if(oldBookingScript) oldBookingScript.remove();
         const script = document.createElement('script');
         script.id = 'jsonp-booking';
-        script.src = `${API_URL}?action=book&date=${date}&time=${time}&type=${type}&level=${level}&name=${name}&phone=${phone}&email=${email}&callback=handleBookingResponse`;
+        script.src = `${API_URL}?action=book&date=${date}&time=${time}&type=${type}&level=${level}&name=${name}&phone=${phone}&email=${email}&bike=${bike}&callback=handleBookingResponse`;
         document.body.appendChild(script);
     });
 
@@ -335,8 +403,7 @@
             status.innerText = response.message;
             document.getElementById('mainForm').reset();
             document.getElementById('phone').value = "+7 ";
-            setLevel('green');
-            setVehicleType('moto');
+            setCategory('moto');
             loadSlots();
         } else {
             status.className = 'err';
